@@ -1,9 +1,12 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/grid">Grid</router-link> |
-      <router-link to="/about">About</router-link>
+      <ul>
+        <li><img alt="MIT Libraries" src="@/assets/logo.png"></li>
+        <li><router-link to="/">Home</router-link></li>
+        <li><router-link to="/grid">Grid</router-link></li>
+        <li><router-link to="/about">About</router-link></li>
+      </ul>
     </div>
     <router-view/>
   </div>
@@ -20,6 +23,21 @@
 
 #nav {
   padding: 30px;
+
+  ul {
+    list-style-type: none;
+
+    li {
+      display: inline-block;
+      margin-right: 0.5rem;
+      padding-right: 0.5rem;
+      border-right: 1px solid black;
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+  }
 
   a {
     font-weight: bold;
