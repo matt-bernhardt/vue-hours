@@ -1,4 +1,6 @@
-# vue-hours
+# Vue Hours
+
+This is a Vue.js project that tries to harvest and display information about library hours. It is currently backed by the local cache of a Google Sheet.
 
 ## Project setup
 ```
