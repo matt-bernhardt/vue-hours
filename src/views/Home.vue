@@ -5,7 +5,7 @@
       :key="location.name"
       :location="location"/>
     <TermSummary
-      v-for="(term, index) in terms"
+      v-for="(term, index) in sheets"
       :index="index"
       :key="term.id"
       :term="term" />
@@ -24,9 +24,13 @@ export default {
     LocationCard,
     TermSummary
   },
+  props: {
+    sheets: Array,
+    foo: Array,
+    spreadsheetId: String
+  },
   data () {
     return {
-      spreadsheetId: '1hK_4p-jx7dxW3RViRcBDSF_4En2QGgxx-Zy7zXkNIQg',
       terms: '',
       locations: [
         {
@@ -46,9 +50,6 @@ export default {
   },
   mounted () {
     console.log('Home was mounted.')
-    this.axios
-      .get('https://spreadsheets.google.com/feeds/worksheets/1hK_4p-jx7dxW3RViRcBDSF_4En2QGgxx-Zy7zXkNIQg/public/basic?alt=json')
-      .then(response => (this.terms = response.data.feed.entry))
   }
 }
 </script>
