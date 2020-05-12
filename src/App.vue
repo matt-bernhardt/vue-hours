@@ -5,10 +5,15 @@
         <li><img alt="MIT Libraries" src="@/assets/logo.png"></li>
         <li><router-link to="/">Home</router-link></li>
         <li><router-link to="/grid">Grid</router-link></li>
-        <li><router-link to="/about">About</router-link></li>
+        <li><router-link to="/study">Study spaces</router-link></li>
+        <li><router-link to="/location">Location page</router-link></li>
+        <li><router-link to="/department">Department page</router-link></li>
+        <li><router-link to="/data">Source data</router-link></li>
       </ul>
     </div>
+    <p>Welcome to the Vue Hours application. This is an attempt to replicate the code responsible for displaying library hours across libraries.mit.edu. The code for this application can be found at <a href="https://github.com/matt-bernhardt/vue-hours">https://github.com/matt-bernhardt/vue-hours</a>.</p>
     <router-view/>
+    <p>This would be the footer.</p>
   </div>
 </template>
 
@@ -46,5 +51,11 @@
       color: #42b983;
     }
   }
+}
+
+.reference {
+  border: 1px solid #545454;
+  margin: 0.5rem;
+  padding: 0.5rem;
 }
 </style>

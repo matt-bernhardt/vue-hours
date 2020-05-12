@@ -1,6 +1,7 @@
 <template>
   <div class="grid">
-    This will be the grid.
+    <div class="reference">This will be the grid display. It is comparable to <a href="https://libraries.mit.edu/hours/">https://libraries.mit.edu/hours/</a>.</div>
+    <h1>Hours grid</h1>
   </div>
 </template>
 
@@ -15,7 +16,4 @@ export default {
 </script>
 
 <style scoped>
-  .grid {
-    background-color: #ffdddd;
-  }
 </style>
