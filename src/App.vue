@@ -11,7 +11,10 @@
         <li><router-link to="/data">Source data</router-link></li>
       </ul>
     </div>
-    <div class="status">Current status: {{ store.state.status }}</div>
+    <div class="status">Current status: {{ store.state.status }}<br>
+      Debugging: {{ store.debug }}<br>
+      Data length: {{ store.state.data.length }}
+    </div>
     <p>Welcome to the Vue Hours application. This is an attempt to replicate the code responsible for displaying library hours across libraries.mit.edu. The code for this application can be found at <a href="https://github.com/matt-bernhardt/vue-hours">https://github.com/matt-bernhardt/vue-hours</a>.</p>
     <router-view/>
     <footer class="footer-outer">
