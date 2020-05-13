@@ -74,9 +74,10 @@ footer {
 }
 
 .reference {
-  border: 1px solid #545454;
-  margin: 0.5rem;
+  background: #fff6cd;
+  border: 1px solid #ffe56a;
   padding: 0.5rem;
+  margin: auto -0.5rem;
 }
 
 #footer-inner {
