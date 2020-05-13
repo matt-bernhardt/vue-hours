@@ -21,13 +21,14 @@ export default {
   },
   data () {
     return {
+      store: this.$root.$data,
       terms: ''
     }
   },
   computed: {
-
   },
   mounted () {
+    this.store.setStatus('Mounting Data')
     console.log('Home was mounted.')
     this.axios
       .get('https://spreadsheets.google.com/feeds/worksheets/1hK_4p-jx7dxW3RViRcBDSF_4En2QGgxx-Zy7zXkNIQg/public/basic?alt=json')

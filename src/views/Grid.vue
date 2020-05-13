@@ -11,6 +11,14 @@
 export default {
   name: 'Home',
   components: {
+  },
+  data () {
+    return {
+      store: this.$root.$data
+    }
+  },
+  mounted () {
+    this.store.setStatus('Mounting Grid')
   }
 }
 </script>

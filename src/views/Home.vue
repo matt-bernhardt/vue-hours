@@ -19,6 +19,7 @@ export default {
   },
   data () {
     return {
+      store: this.$root.$data,
       spreadsheetId: '1hK_4p-jx7dxW3RViRcBDSF_4En2QGgxx-Zy7zXkNIQg',
       locations: [
         {
@@ -32,6 +33,9 @@ export default {
         }
       ]
     }
+  },
+  mounted () {
+    this.store.setStatus('Mounting Home')
   },
   computed: {
 

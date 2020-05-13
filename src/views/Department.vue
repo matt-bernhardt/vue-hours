@@ -11,6 +11,14 @@
 export default {
   name: 'Department',
   components: {
+  },
+  data () {
+    return {
+      store: this.$root.$data
+    }
+  },
+  mounted () {
+    this.store.setStatus('Mounting Department')
   }
 }
 </script>

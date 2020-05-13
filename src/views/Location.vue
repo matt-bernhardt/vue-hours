@@ -11,6 +11,14 @@
 export default {
   name: 'Location',
   components: {
+  },
+  data () {
+    return {
+      store: this.$root.$data
+    }
+  },
+  mounted () {
+    this.store.setStatus('Mounting Location ' + this.$route.params.id)
   }
 }
 </script>
