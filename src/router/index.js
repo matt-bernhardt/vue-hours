@@ -22,7 +22,12 @@ const routes = [
   },
   {
     path: '/location',
-    name: 'Location',
+    name: 'Location index',
+    component: () => import(/* webpackChunkName: "about" */ '../views/LocationIndex.vue')
+  },
+  {
+    path: '/location/:id',
+    name: 'Single location',
     component: () => import(/* webpackChunkName: "about" */ '../views/Location.vue')
   },
   {

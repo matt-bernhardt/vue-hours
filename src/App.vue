@@ -6,30 +6,50 @@
         <li><router-link to="/">Home</router-link></li>
         <li><router-link to="/grid">Grid</router-link></li>
         <li><router-link to="/study">Study spaces</router-link></li>
-        <li><router-link to="/location">Location page</router-link></li>
+        <li><router-link to="/location">Locations</router-link></li>
         <li><router-link to="/department">Department page</router-link></li>
         <li><router-link to="/data">Source data</router-link></li>
       </ul>
     </div>
     <p>Welcome to the Vue Hours application. This is an attempt to replicate the code responsible for displaying library hours across libraries.mit.edu. The code for this application can be found at <a href="https://github.com/matt-bernhardt/vue-hours">https://github.com/matt-bernhardt/vue-hours</a>.</p>
     <router-view/>
-    <p>This would be the footer.</p>
+    <footer class="footer-outer">
+      <div id="footer-inner">
+        This would be the footer.
+      </div>
+    </footer>
   </div>
 </template>
 
 <style lang="scss">
+body {
+  background: #fafafa;
+}
+
+footer {
+  background: #eaeaea;
+  margin: 1rem -1rem -1rem -1rem;
+}
+
 #app {
+  background: #fff;
+  border: 1px solid #eaeaea;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
 #nav {
-  padding: 30px;
+  margin: 0 0 1rem 0;
 
   ul {
     list-style-type: none;
+    margin: 0 0 1rem 0;
+    padding: 0;
 
     li {
       display: inline-block;
@@ -57,5 +77,9 @@
   border: 1px solid #545454;
   margin: 0.5rem;
   padding: 0.5rem;
+}
+
+#footer-inner {
+  padding: 1rem;
 }
 </style>
