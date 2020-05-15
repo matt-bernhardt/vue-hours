@@ -19,8 +19,8 @@ export default {
   },
   computed: {
     hours: function () {
-      if (this.location.open && this.location.close) {
-        return this.location.open + ' - ' + this.location.close
+      if (this.location.today.note) {
+        return this.location.today.note
       }
       return 'closed'
     },
