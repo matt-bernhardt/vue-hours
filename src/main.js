@@ -8,6 +8,8 @@ Vue.config.productionTip = false
 var hoursStore = {
   debug: true,
   state: {
+    currentDate: new Date(),
+    currentTerm: '',
     data: [],
     dataUrl: '',
     locations: [],
@@ -15,6 +17,7 @@ var hoursStore = {
     spreadsheetKey: '1hK_4p-jx7dxW3RViRcBDSF_4En2QGgxx-Zy7zXkNIQg',
     status: 'Initializing',
     terms: [],
+    termsData: {},
     termsUrl: ''
   },
   buildUrl (base, key, mode, format) {
@@ -53,7 +56,10 @@ var hoursStore = {
     //   oj9ljf6
     return url.slice(url.lastIndexOf('/') + 1, url.length)
   },
-  findSemester (sheet) {
+  findCurrentSemester (array) {
+    return array.end >= this.state.currentDate
+  },
+  findSemesterSheet (sheet) {
     return sheet.name === 'Semester Breakdown'
   },
   initialize () {
@@ -67,17 +73,15 @@ var hoursStore = {
     this.state.dataUrl = this.buildUrl(this.state.spreadsheetKey, '', 'index', 'json')
 
     // 2. Load the index of sheets
-    if (this.debug) console.log('loading data from ' + this.state.dataUrl)
-    this.setStatus('Loading...')
+    this.setStatus('Loading data from ' + this.state.dataUrl)
     this.axios
       .get(this.state.dataUrl)
       .then(response => {
-        this.setStatus('Inside then step')
+        this.setStatus('Storing received data')
         this.state.data = response.data.feed.entry
       })
       .finally(() => {
-        if (this.debug) console.log('...response received')
-        this.setStatus('Loaded')
+        this.setStatus('Parsing stored data')
         // 3. Parse the index of sheets, populating the array of sheet information
         this.state.sheets = this.parseData(this.state.data)
         // Populate list of terms.
@@ -87,12 +91,50 @@ var hoursStore = {
     if (this.debug) console.log('...response sent, waiting for response')
     this.setStatus('Waiting...')
   },
+  lookupCurrentSemester (needleDate) {
+    // This will return the term object for the semester containing a provided date.
+    // Sort the terms sheet
+    this.setStatus('Looking up semester for ' + needleDate)
+    var result = 'Default Hours'
+    result = this.state.terms.find(this.findCurrentSemester, this).name
+    return result
+  },
+  setDate (newDate) {
+    if (this.debug) console.log('setting "current" date to ' + newDate)
+    this.state.currentDate = newDate
+  },
+  setTerm (newTerm) {
+    if (this.debug) console.log('setting currentTerm to ' + newTerm)
+    this.state.currentTerm = newTerm
+  },
   setStatus (newStatus) {
     if (this.debug) console.log('status set to ', newStatus)
     this.state.status = newStatus
   },
   loadTerms () {
-    if (this.debug) console.log('looking for Terms sheet')
+    // This will populate the terms array inside the store.
+    // 1. Identify the URL for the specific sheet that contains term information.
+    // 2. Loads the contents of that sheet.
+    // 3. Parses the response to populate the terms array.
+    // 1. Identify the URL
+    this.state.termsUrl = this.state.sheets.find(this.findSemesterSheet).url
+    this.setStatus('Loading term information from ' + this.state.termsUrl)
+
+    // 2. Loads data from that URL
+    this.axios
+      .get(this.state.termsUrl)
+      .then(response => {
+        this.state.termsData = response.data.feed.entry
+      })
+      .finally(() => {
+        // Populate the array of terms from returned data.
+        this.state.terms = this.parseTerms(this.state.termsData)
+        // Look up current date and semester.
+        this.setDate(new Date())
+        this.setTerm(this.lookupCurrentSemester(this.state.currentDate))
+
+        this.setStatus('Finished loading')
+      })
   },
   parseData (data) {
     // This parses the returned information about all sheets and extracts a few things:
@@ -100,7 +142,6 @@ var hoursStore = {
     // 2. Where the current base schedule is
     // 3. Where the exceptions sheet is
     // 4. URLs for each sheet's data
-    this.setStatus('Parsing loaded data...')
     console.log(data.length)
     var i, name, key, url
     var result = []
@@ -110,6 +151,24 @@ var hoursStore = {
       url = this.buildUrl(this.state.spreadsheetKey, key, 'data', 'json')
       result.push({ name: name, key: key, url: url })
     }
+    return result
+  },
+  parseTerms (data) {
+    // This parses returned information about terms.
+    this.setStatus('Parsing received terms information')
+    var i, name, start, end
+    var result = []
+    for (i = 0; i < data.length; i++) {
+      name = data[i].gsx$semestername.$t
+      start = new Date(data[i].gsx$start.$t)
+      end = new Date(data[i].gsx$end.$t)
+      result.push({ name: name, start: start, end: end })
+    }
+    // Sort the array of terms for easier parsing and lookups later.
+    this.setStatus('Sorting terms')
+    result.sort(function (a, b) {
+      return new Date(a.end) - new Date(b.end)
+    })
     return result
   }
 }

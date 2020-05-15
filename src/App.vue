@@ -12,6 +12,8 @@
       </ul>
     </div>
     <div class="status">Current status: {{ store.state.status }}<br>
+      Current date: {{ store.state.currentDate }}<br>
+      Current semester: {{ store.state.currentTerm }}<br>
       Debugging: {{ store.debug }}<br>
       Data length: {{ store.state.data.length }}
     </div>
