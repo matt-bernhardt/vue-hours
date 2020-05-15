@@ -11,6 +11,14 @@
 export default {
   name: 'Study',
   components: {
+  },
+  data () {
+    return {
+      store: this.$root.$data
+    }
+  },
+  mounted () {
+    this.store.setStatus('Mounting Study')
   }
 }
 </script>

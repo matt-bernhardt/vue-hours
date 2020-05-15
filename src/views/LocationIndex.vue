@@ -16,6 +16,14 @@
 export default {
   name: 'LocationIndex',
   components: {
+  },
+  data () {
+    return {
+      store: this.$root.$data
+    }
+  },
+  mounted () {
+    this.store.setStatus('Mounting LocationIndex')
   }
 }
 </script>

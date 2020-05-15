@@ -1,23 +1,23 @@
 <template>
-  <div class="term-summary">
-    <h2>{{ index }}. {{ term.title.$t }}</h2>
-    <p>{{ term }}</p>
+  <div class="sheet-summary">
+    <h2>{{ index }}. {{ sheet.title.$t }}</h2>
+    <pre>{{ sheet }}</pre>
 
   </div>
 </template>
 
 <script>
 export default {
-  name: 'TermSummary',
+  name: 'SheetSummary',
   props: {
     index: Number,
-    term: String
+    sheet: String
   }
 }
 </script>
 
 <style scoped lang="scss">
-.term-summary {
+.sheet-summary {
   border-top: 1px solid red;
   margin-top: 1rem;
   padding-top: 1rem;
