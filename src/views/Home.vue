@@ -4,6 +4,11 @@
     <h2>Library hours for {{ store.state.currentDate.toLocaleDateString(undefined, {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }} </h2>
     <p>({{ store.state.currentTerm }})</p>
     <LocationCard
+      v-for="(location) in store.state.locations"
+      :key="location.name"
+      :location="location"/>
+    <hr>
+    <LocationCard
       v-for="(location) in locations"
       :key="location.name"
       :location="location"/>
@@ -21,19 +26,7 @@ export default {
   },
   data () {
     return {
-      store: this.$root.$data,
-      spreadsheetId: '1hK_4p-jx7dxW3RViRcBDSF_4En2QGgxx-Zy7zXkNIQg',
-      locations: [
-        {
-          name: 'Barker Library',
-          study24x7: true,
-          open: '8:00 AM',
-          close: '2:00 PM'
-        },
-        {
-          name: 'Dewey Library'
-        }
-      ]
+      store: this.$root.$data
     }
   },
   mounted () {

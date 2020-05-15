@@ -10,14 +10,17 @@ var hoursStore = {
   state: {
     currentDate: new Date(),
     currentTerm: '',
+    currentWeekday: '',
     data: [],
     dataUrl: '',
     locations: [],
+    locationsData: [],
+    locationsUrl: '',
     sheets: [],
     spreadsheetKey: '1hK_4p-jx7dxW3RViRcBDSF_4En2QGgxx-Zy7zXkNIQg',
     status: 'Initializing',
     terms: [],
-    termsData: {},
+    termsData: [],
     termsUrl: ''
   },
   buildUrl (base, key, mode, format) {
@@ -59,8 +62,11 @@ var hoursStore = {
   findCurrentSemester (array) {
     return array.end >= this.state.currentDate
   },
-  findSemesterSheet (sheet) {
+  findSemesterIndex (sheet) {
     return sheet.name === 'Semester Breakdown'
+  },
+  findSemesterSheet (array) {
+    return array.name === this.state.currentTerm
   },
   initialize () {
     // This performs the store initialization steps.
@@ -91,26 +97,22 @@ var hoursStore = {
     if (this.debug) console.log('...response sent, waiting for response')
     this.setStatus('Waiting...')
   },
-  lookupCurrentSemester (needleDate) {
-    // This will return the term object for the semester containing a provided date.
-    // Sort the terms sheet
-    this.setStatus('Looking up semester for ' + needleDate)
-    var result = 'Default Hours'
-    result = this.state.terms.find(this.findCurrentSemester, this).name
-    return result
-  },
-  setDate (newDate) {
-    if (this.debug) console.log('setting "current" date to ' + newDate)
-    this.state.currentDate = newDate
-    this.setTerm(this.lookupCurrentSemester(this.state.currentDate))
-  },
-  setTerm (newTerm) {
-    if (this.debug) console.log('setting currentTerm to ' + newTerm)
-    this.state.currentTerm = newTerm
-  },
-  setStatus (newStatus) {
-    if (this.debug) console.log('status set to ', newStatus)
-    this.state.status = newStatus
+  loadHours () {
+    // This will load the hours information for the current term, and then check the
+    // Overrides sheet for anything that applies to the current date.
+    // The result will be an hours array of objects for the defined locations.
+    this.state.locationsUrl = this.state.sheets.find(this.findSemesterSheet, this).url
+    this.setStatus('Loading hours data for ' + this.state.currentTerm + ' from ' + this.state.locationsUrl)
+
+    this.axios
+      .get(this.state.locationsUrl)
+      .then(response => {
+        this.state.locationsData = response.data.feed.entry
+      })
+      .finally(() => {
+        this.state.locations = this.parseHours(this.state.locationsData)
+        this.setStatus('Finished loading')
+      })
   },
   loadTerms () {
     // This will populate the terms array inside the store.
@@ -118,7 +120,7 @@ var hoursStore = {
     // 2. Loads the contents of that sheet.
     // 3. Parses the response to populate the terms array.
     // 1. Identify the URL
-    this.state.termsUrl = this.state.sheets.find(this.findSemesterSheet).url
+    this.state.termsUrl = this.state.sheets.find(this.findSemesterIndex).url
     this.setStatus('Loading term information from ' + this.state.termsUrl)
 
     // 2. Loads data from that URL
@@ -132,9 +134,16 @@ var hoursStore = {
         this.state.terms = this.parseTerms(this.state.termsData)
         // Look up current date (which then looks up the current semester)
         this.setDate(new Date())
-
-        this.setStatus('Finished loading')
+        this.loadHours()
       })
+  },
+  lookupCurrentSemester (needleDate) {
+    // This will return the term object for the semester containing a provided date.
+    // Sort the terms sheet
+    this.setStatus('Looking up semester for ' + needleDate)
+    var result = 'Default Hours'
+    result = this.state.terms.find(this.findCurrentSemester, this).name
+    return result
   },
   parseData (data) {
     // This parses the returned information about all sheets and extracts a few things:
@@ -151,6 +160,27 @@ var hoursStore = {
       url = this.buildUrl(this.state.spreadsheetKey, key, 'data', 'json')
       result.push({ name: name, key: key, url: url })
     }
+    return result
+  },
+  parseHours (data) {
+    this.setStatus('Parsing received hours information')
+    var i, record
+    var result = []
+    for (i = 0; i < data.length; i++) {
+      record = {
+        name: data[i].gsx$location.$t,
+        sunday: { note: data[i].gsx$sunday.$t },
+        monday: { note: data[i].gsx$monday.$t },
+        tuesday: { note: data[i].gsx$tuesday.$t },
+        wednesday: { note: data[i].gsx$wednesday.$t },
+        thursday: { note: data[i].gsx$thursday.$t },
+        friday: { note: data[i].gsx$friday.$t },
+        saturday: { note: data[i].gsx$saturday.$t }
+      }
+      record.today = record[this.state.currentWeekday.toLowerCase()]
+      result.push(record)
+    }
+    console.log(result)
     return result
   },
   parseTerms (data) {
@@ -170,6 +200,20 @@ var hoursStore = {
       return new Date(a.end) - new Date(b.end)
     })
     return result
+  },
+  setDate (newDate) {
+    if (this.debug) console.log('setting "current" date to ' + newDate)
+    this.state.currentDate = newDate
+    this.state.currentWeekday = this.state.currentDate.toLocaleDateString(undefined, { weekday: 'long' })
+    this.setTerm(this.lookupCurrentSemester(this.state.currentDate))
+  },
+  setTerm (newTerm) {
+    if (this.debug) console.log('setting currentTerm to ' + newTerm)
+    this.state.currentTerm = newTerm
+  },
+  setStatus (newStatus) {
+    if (this.debug) console.log('status set to ', newStatus)
+    this.state.status = newStatus
   }
 }
 
