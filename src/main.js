@@ -102,6 +102,7 @@ var hoursStore = {
   setDate (newDate) {
     if (this.debug) console.log('setting "current" date to ' + newDate)
     this.state.currentDate = newDate
+    this.setTerm(this.lookupCurrentSemester(this.state.currentDate))
   },
   setTerm (newTerm) {
     if (this.debug) console.log('setting currentTerm to ' + newTerm)
@@ -129,9 +130,8 @@ var hoursStore = {
       .finally(() => {
         // Populate the array of terms from returned data.
         this.state.terms = this.parseTerms(this.state.termsData)
-        // Look up current date and semester.
+        // Look up current date (which then looks up the current semester)
         this.setDate(new Date())
-        this.setTerm(this.lookupCurrentSemester(this.state.currentDate))
 
         this.setStatus('Finished loading')
       })
